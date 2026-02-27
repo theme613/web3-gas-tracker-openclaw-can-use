@@ -49,7 +49,7 @@ In the meantime, I can tell you that the gas prices shown in the dashboard updat
         }
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
         // Build context with current gas data
         let contextMessage = message;
