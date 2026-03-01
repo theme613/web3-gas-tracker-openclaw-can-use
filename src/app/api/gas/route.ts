@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
     const apiKey = process.env.ETHERSCAN_API_KEY;
+    const now = new Date().toISOString();
 
     if (!apiKey) {
         // Return mock data when no API key is configured
@@ -17,6 +18,11 @@ export async function GET() {
                 gasUsedRatio:
                     "0.35,0.42,0.55,0.61,0.49",
             },
+            _meta: {
+                serverTimestamp: now,
+                dataSource: "mock",
+                refreshIntervalMs: 15000,
+            },
         });
     }
 
@@ -29,11 +35,25 @@ export async function GET() {
         }
 
         const data = await response.json();
-        return NextResponse.json(data);
+        return NextResponse.json({
+            ...data,
+            _meta: {
+                serverTimestamp: now,
+                dataSource: "etherscan",
+                refreshIntervalMs: 15000,
+            },
+        });
     } catch (error) {
         console.error("Gas API error:", error);
         return NextResponse.json(
-            { error: "Failed to fetch gas data" },
+            {
+                error: "Failed to fetch gas data",
+                _meta: {
+                    serverTimestamp: now,
+                    dataSource: "error",
+                    refreshIntervalMs: 15000,
+                },
+            },
             { status: 500 }
         );
     }

@@ -22,6 +22,11 @@ interface GasApiResponse {
     suggestBaseFee: string;
     LastBlock: string;
   };
+  _meta?: {
+    serverTimestamp: string;
+    dataSource: string;
+    refreshIntervalMs: number;
+  };
   error?: string;
 }
 
@@ -39,6 +44,8 @@ export default function Home() {
   const [gasLoading, setGasLoading] = useState(true);
   const [chatLoading, setChatLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [dataSource, setDataSource] = useState<string>("");
+  const [serverTimestamp, setServerTimestamp] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -57,6 +64,10 @@ export default function Home() {
       const data = await res.json();
       setGasData(data);
       setLastUpdated(new Date());
+      if (data._meta) {
+        setDataSource(data._meta.dataSource);
+        setServerTimestamp(data._meta.serverTimestamp);
+      }
     } catch (err) {
       console.error("Failed to fetch gas data:", err);
     } finally {
@@ -149,6 +160,8 @@ export default function Home() {
             data={gasData?.result || null}
             loading={gasLoading}
             lastUpdated={lastUpdated}
+            dataSource={dataSource}
+            serverTimestamp={serverTimestamp}
           />
         </div>
 
